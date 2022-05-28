@@ -1,0 +1,661 @@
+Title Final_project
+INCLUDE irvine32.inc
+.data
+arr1 byte 11 Dup(-1)		; Save 15 Questions ans 1 for right 0 for wrong
+arr2 dword 5 Dup(?)			; Save 4 options 1of them is correct
+opt1  byte "a) ",0,"b) ",0,"c) ",0,"d) ",0
+right1 byte"Right answer: ",0
+wrong1 byte "Opps Wrong answer!",0ah,0
+title1 byte "IQ quiz Genreater",0ah,0ah,0
+choice1 byte "Press key your choice: ",0
+Q1 byte "What will comes next in the sequence? ",0
+Q4 byte "A box contain ",0," balls r, w & b. The r & w together number ",0,", and the w & b number ",0,"How many of them are white?",0
+Q5 byte " is the product of two numbers, one of which is 3 times the other. What is the sum of the numbers?",0
+Q6 byte "What number best completes the analogy: ",0
+Q7 byte "Nia, ",0," years old, is three times as old as her sister. How old will Nia be when she is twice as old as her sister?",0
+Q8 byte "IF A + B = ",0," & A - B = ",0," Then, A / B = ?",0
+Q10 byte "If you divide ",0," by half and add ten, what do you get?",0
+Q11 byte "At a conference,",0," members shook hands with each other.How many total number of hand shakes occurred?",0
+
+x byte ", ",0
+x1 dword ?,0	; General purpose
+x2 byte 0		; Save arr1 answer is right or wrong
+
+.code
+answer1 proto,val1:dword,val2:dword
+
+main proc
+mov eax,14
+call settextcolor
+Mov dl,18
+Mov dh,5
+Call GotoXY
+mov edx,offset title1
+call writestring
+call Randomize
+
+Qs:
+	call RandQs
+	call crlf
+	call crlf
+	cmp eax,-1
+	jz ex
+	cmp eax,1
+	jz l1
+	cmp eax,2
+	jz l2
+	cmp eax,3
+	jz l3
+	cmp eax,4
+	jz l4
+	cmp eax,5
+	jz l5
+	cmp eax,6
+	jz l6
+	cmp eax,7
+	jz l7
+	cmp eax,8
+	jz l8
+	cmp eax,9
+	jz l9
+	cmp eax,10
+	jz l10
+	cmp eax,11
+	jz l11
+	cmp eax,12
+	jz l12
+	
+l1:
+	call fun1
+	jmp Qs
+l2:
+	call fun2
+	jmp Qs
+l3:
+	call fun3
+	jmp Qs
+l4:
+	call fun4
+	jmp Qs
+l5:
+	call fun5
+	jmp Qs
+l6:
+	call fun6
+	jmp Qs
+l7:
+	call fun7
+	jmp Qs
+l8:
+	call fun8
+	jmp Qs
+l9:
+	call fun9
+	jmp Qs
+l10:
+	call fun10
+	jmp Qs
+l11:
+	call fun11
+	jmp Qs
+l12:
+	call fun12
+	jmp Qs
+
+ex:
+	mov ebx,0
+	mov ecx,lengthof arr1
+	mov esi,offset arr1
+	mov eax,1
+	cnt1:
+		cmp al,[esi]
+		jnz agn1
+		inc ebx
+		agn1:
+		inc esi
+		loop cnt1
+
+mov edx,offset right1
+call writestring
+mov eax,ebx
+call writedec
+
+mov al,'/'
+call writechar
+mov eax,lengthof arr1
+call writedec
+call crlf
+
+exit
+main endp
+
+
+fun1 proc
+mov edx,offset Q1
+call writestring
+mov x2,0
+mov eax,500
+call randomrange
+add eax,200
+
+mov ecx,2
+l1:
+	cmp ecx,2
+	je s1
+		mov edx,offset x
+		call writestring
+	s1:
+	call writedec
+	mov edx,offset x
+	call writestring
+
+	add eax,5
+	call writedec
+	shr eax,1
+	loop l1
+invoke answer1,300,10
+ret
+fun1 endp
+
+fun2 proc
+mov x2,1
+mov edx,offset Q1
+call writestring
+mov ebx,0
+mov eax,20
+call randomrange
+add eax,65
+
+mov bl,al
+mov eax,20
+call randomrange
+add eax,70
+mov bh,al
+
+mov eax,20
+call randomrange
+add eax,65
+rol eax,16
+add ebx,eax
+
+mov ecx,4
+mov eax,0
+
+l1:
+	cmp ecx,4
+	je s1
+		mov edx,offset x
+		call writestring
+	s1:
+	mov arr2,ebx
+	mov edx,offset arr2
+	call writestring
+	
+	sub bh,1
+	cmp eax,0
+	jnz t1
+		add bl,2
+		mov eax,1
+		jmp ex
+	t1:
+		sub bl,1
+		add ebx,10000h
+		mov eax,0
+	ex:
+	loop l1
+push ebx
+call option1
+mov edx,ebx
+mov esi,0
+mov ecx,4
+l2:
+	cmp esi,edx
+	jnz ans1
+		pop ebx
+		mov x1,ebx
+		jmp an
+	ans1:
+	mov ebx,0
+	mov eax,20
+	call randomrange
+	add eax,65
+
+	mov bl,al
+	mov eax,20
+	call randomrange
+	add eax,70
+	mov bh,al
+	
+	mov eax,20
+	call randomrange
+	add eax,65
+	rol eax,16
+	add ebx,eax
+	an:
+		mov arr2[esi* type arr2],ebx
+		inc esi
+	
+	loop l2
+	mov ebx,edx
+call setoption1
+push 0
+call checkans
+add esp,4
+ret
+fun2 endp
+
+fun3 proc
+mov x2,2
+mov esi,0
+mov ecx,5
+l1:
+	mov eax,9
+	call randomrange
+	inc eax
+	mov arr2[esi*type arr2],eax
+	call writedec
+	mov al,' '
+	call writechar
+	call writechar
+	call writechar
+	inc esi
+loop l1
+
+mov ecx,4
+mov edx,2
+l2:
+	mov esi,0
+	call crlf
+	push ecx
+	mov ecx,edx 
+	l4:
+		mov al," "
+		call writechar
+	loop l4
+	pop ecx
+	push ecx
+	l3:
+		mov eax,arr2[esi*type arr2]
+		inc esi
+		add eax,arr2[esi*type arr2] 
+		dec esi
+		cmp edx,5
+		jz l5
+		call writedec
+		l5:
+		xchg eax,arr2[esi*type arr2]
+		
+		mov al," "
+		call writechar
+		call writechar
+		inc esi
+	loop l3
+	pop ecx
+	inc edx
+loop l2
+mov al,'?'
+call writechar
+mov eax,arr2
+invoke answer1,150,50
+
+ret
+fun3 endp
+
+
+fun4 proc
+	mov x2,3
+	mov edx,offset Q4
+	call writestring
+	add edx,15
+	mov ecx,2
+	mov eax,500
+	call randomrange
+	add eax,200
+	call writedec
+	mov x1,eax
+	
+	call writestring
+	add edx,44
+	l1:
+		mov eax,300
+		call randomrange
+		add eax,200
+		call writedec
+		cmp ecx,1
+		jnz l2
+		push eax
+		mov al,'.'
+		call writechar
+		pop eax
+		call crlf
+		l2:
+		call writestring
+		add edx,24
+		add ebx,eax
+	loop l1
+
+	sub ebx,x1
+	mov eax,ebx
+	invoke answer1,400,100
+
+ret
+fun4 endp
+
+fun5 proc
+	mov x2,4
+	mov eax,50
+	call Randomrange
+	mov ebx,eax
+	mov x1,ebx
+	mov cl,3
+	mul cl
+
+	add x1,eax
+	mul ebx
+	call writedec
+	mov edx, offset Q5
+	call writestring
+
+	mov eax,x1
+	invoke answer1,150,10	
+ret
+fun5 endp
+
+fun6 proc
+	mov x2,5
+	mov edx, offset Q6
+		call writestring
+
+		mov ecx,2
+		mov ebx,2
+
+l1:		mov eax,100
+		call randomrange
+		add eax,5
+		push eax
+		div bl
+		cmp ah,0
+		je l3
+
+		pop eax
+		inc eax
+		jmp l2
+
+l3:		pop eax
+		
+l2:		call writedec
+		push eax
+		mov al, ':'
+		call writechar
+		pop eax
+		div bl
+		cmp ecx,1
+		jz ex
+		call writedec
+
+		call crlf
+		loop l1
+
+ex:		push eax
+		mov al,'?'
+		call writechar
+		pop eax
+		invoke answer1,60,2
+ret
+fun6 endp
+
+fun7 proc
+	mov x2,6
+	mov eax,7
+	call randomrange
+	add eax,3
+	mov ebx,eax
+	mov cl,3
+	mul cl
+
+	mov edx,offset Q7
+	call writestring
+	call writedec
+	add edx,6
+	call writestring
+
+	add eax,ebx
+	invoke answer1,30,10
+ret
+fun7 endp
+	
+fun8 proc
+	mov x2,7
+	mov eax,200
+	call randomrange
+	add eax,70
+
+	mov ebx,eax
+	mov ecx,eax
+
+	mov eax,40
+	call randomrange
+	add eax,5
+
+	mov edi,eax
+	add ebx,eax
+	sub ecx,eax
+
+	mov edx,offset Q8
+	call writestring
+	mov eax,ebx
+	call writedec
+
+	add edx,12
+	call writestring
+	mov eax,ecx
+	call writedec
+
+	add edx,12
+	call writestring
+
+	mov eax,ebx
+	cdq
+	div edi
+	dec eax
+	invoke answer1,200,1
+	ret
+fun8 endp
+
+fun9 proc
+	mov x2,8
+	mov edx,offset Q1
+	call writestring
+	mov eax,8
+	call randomrange
+	add eax,1
+	mov ecx,3
+	l1:
+		call writedec
+		mov edx,offset x
+		call writestring
+		push eax
+		mov ebx,eax
+		mul ebx
+		mov ebx,eax
+		pop eax
+		mov edi,2
+		mul edi
+		add eax,ebx
+		inc eax
+	loop l1
+	invoke answer1,2000,500
+ret
+fun9 endp
+
+fun10 proc
+	mov x2,9
+	mov edx, offset Q10
+	call writestring
+	mov eax,200
+	call randomrange
+	add eax,30
+	call writedec
+	add edx,15
+	call writestring
+	shl eax,1
+	add eax,10
+	invoke answer1,400,100
+ret
+fun10 endp
+
+
+fun11 proc
+	mov x2,10
+	mov edx,offset Q11
+	call writestring
+	mov eax,20
+	call randomrange
+	add eax,5
+	call writedec
+	add edx,17
+	call writestring
+	push eax
+	dec eax
+	mov ebx,eax
+	pop eax
+	mul ebx
+	invoke answer1,200,50
+ret
+fun11 endp
+
+fun12 proc
+	mov x2,11
+
+ret
+fun12 endp
+
+answer1 proc,val1:dword,val2:dword
+	call option1
+	mov ecx,4
+	mov edx,eax
+	mov esi,0
+	l3:
+		cmp ebx,esi
+		jnz ans
+			mov arr2[esi* type arr2],edx
+			jmp an
+			ans:
+				mov eax,val1
+				call randomrange
+				add eax,val2
+				cmp eax,edx
+				jne l4
+				add eax,15
+				l4:
+				mov arr2[esi* type arr2],eax
+			an:
+				inc esi
+	loop l3
+call setoption
+push 1
+call checkans
+add esp,4
+ret
+answer1 endp
+
+RandQs proc
+	mov ecx,lengthof arr1
+	mov ebx,0
+	mov eax,-1
+	mov edi,offset arr1
+	repne scasb
+	jnz ex
+	
+	l3:
+	mov eax,lengthof arr1
+	call randomrange
+	mov edx,-1
+	cmp dl,arr1[eax]
+	jnz l3
+	inc eax
+	ex:
+	ret
+RandQs endp
+
+option1 proc uses eax
+	mov eax,4
+	call randomrange
+	mov ebx,eax
+ret
+option1 endp
+
+setoption proc
+	call crlf
+	mov esi,offset arr2
+	mov edi,0
+	mov ecx,4
+	l1:
+		mov edx,offset opt1
+		add edx,edi
+		call writestring
+		mov eax,[esi]
+		call writedec
+		call crlf
+		add esi,4
+		add edi,4
+		loop l1
+ret
+setoption endp
+
+setoption1 proc
+	call crlf
+	mov esi,offset arr2
+	mov edi,0
+	mov ecx,4
+	l1:
+	mov edx,offset opt1
+	add edx,edi
+	call writestring
+	mov edx,esi
+	call writestring
+	call crlf
+	add esi,4
+	add edi,4
+	loop l1
+ret
+setoption1 endp
+
+checkans proc
+	push ebp
+	mov ebp,esp
+	mov ecx,[ebp+8]
+	mov edx,offset choice1
+	call writestring
+	call readchar
+	call writechar
+	call crlf
+	sub al,'a'
+	cmp al,bl
+	jnz tt1
+		mov edx,offset right1
+		call writestring
+		movzx eax,x2
+		mov arr1[eax],1
+		jmp ex
+	tt1:
+		movzx eax,x2
+		mov arr1[eax],0
+		mov edx,offset wrong1
+		call writestring
+		mov edx,offset right1
+		call writestring
+		cmp ecx,0
+		jz t1
+		mov eax,[arr2+ebx*type arr2]
+		call writedec
+		jmp ex
+		t1:
+		mov edx,offset x1
+		call writestring
+	ex:
+	mov esp,ebp
+	pop ebp
+ret
+checkans endp
+end main
